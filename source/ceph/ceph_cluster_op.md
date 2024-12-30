@@ -6,6 +6,16 @@
 # 查看集群的状态
 ceph -s 
 ceph -w 
+ceph health
+
+# 列出节点上所有ceph实例
+sudo systemctl  list-units|grep "ceph"|awk '{print $1}' |grep service
+ceph-crash.service
+ceph-mgr@ceph-node01.service
+ceph-mon@ceph-node01.service
+ceph-osd@0.service
+ceph-osd@1.service
+ceph-radosgw@rgw.ceph-node01.service
 ```
 
 ## 2. 存储池管理

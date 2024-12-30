@@ -119,7 +119,7 @@ ceph-deploy  mgr create ceph-node01 ceph-node02
 ```
 ### 3.4 创建 Rgw 节点
 
-Rgw 用来提供对象存储,
+创建rgw，使用对象存储。
 
 ```shell
 ceph-deploy rgw create ceph-node01 ceph-node03
@@ -127,7 +127,7 @@ ceph-deploy rgw create ceph-node01 ceph-node03
 
 ### 3.5 创建 Mds 节点
 
-Mds 用来提供 CephFS
+创建mds，使用cephfs文件系统服务时，需安装mds。作用：数据元服务。
 
 ```shell
 ceph-deploy mds create ceph-node02 ceph-node03
