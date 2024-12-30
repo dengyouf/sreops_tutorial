@@ -39,6 +39,8 @@ kernel.pid_max = 4194303
 EOF
 echo "vm.swappiness = 0" >> /etc/sysctl.conf
 sysctl -p
+# 时间同步
+echo "*/5 * * * * /usr/sbin/ntpdate time1.aliyun.com &> /dev/null && hwclock -w" >> /var/spool/cron/root
 ```
 
 ## 2. 准备Ceph集群

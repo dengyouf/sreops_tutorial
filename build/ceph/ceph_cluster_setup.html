@@ -165,6 +165,8 @@ cat<span class="w"> </span>&gt;&gt;<span class="w"> </span>/etc/sysctl.conf<span
 <span class="s">EOF</span>
 <span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;vm.swappiness = 0&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/etc/sysctl.conf
 sysctl<span class="w"> </span>-p
+<span class="c1"># 时间同步</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;*/5 * * * * /usr/sbin/ntpdate time1.aliyun.com &amp;&gt; /dev/null &amp;&amp; hwclock -w&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/var/spool/cron/root
 </pre></div>
 </div>
 </section>
@@ -303,7 +305,7 @@ ceph<span class="w"> </span>mgr<span class="w"> </span>services
 ceph<span class="w"> </span>dashboard<span class="w"> </span>ac-user-create<span class="w"> </span>admin<span class="w"> </span>-i<span class="w"> </span>~/password.txt<span class="w"> </span>administrator
 </pre></div>
 </div>
-<p><img alt="img.png" src="ceph/img.png" /></p>
+<p><img alt="img.png" src="../_images/ceph-dashboard.png" /></p>
 </section>
 </section>
 <section id="id9">

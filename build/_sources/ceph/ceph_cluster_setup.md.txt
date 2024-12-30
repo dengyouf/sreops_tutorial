@@ -39,6 +39,8 @@ kernel.pid_max = 4194303
 EOF
 echo "vm.swappiness = 0" >> /etc/sysctl.conf
 sysctl -p
+# 时间同步
+echo "*/5 * * * * /usr/sbin/ntpdate time1.aliyun.com &> /dev/null && hwclock -w" >> /var/spool/cron/root
 ```
 
 ## 2. 准备Ceph集群
@@ -180,7 +182,7 @@ ceph mgr services
 echo "admin"  > ~/password.txt
 ceph dashboard ac-user-create admin -i ~/password.txt administrator
 ```
-![img.png](img.png)
+![img.png](imgs/ceph-dashboard.png)
 
 ## 4. 验证集群
 
