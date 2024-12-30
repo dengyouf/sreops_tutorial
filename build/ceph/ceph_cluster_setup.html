@@ -21,7 +21,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Ceph 集群运维" href="02.html" />
+    <link rel="next" title="Ceph 集群运维" href="ceph_cluster_op.html" />
     <link rel="prev" title="&lt;no title&gt;" href="../index.html" /> 
 </head>
 
@@ -65,16 +65,16 @@
 <li class="toctree-l4"><a class="reference internal" href="#id8">3.6.2 添加为Osd</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#id9">3.7 验证集群</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dashboard">3.7 启用Dashboard</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">4. 验证集群</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="02.html">Ceph 集群运维</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ceph_cluster_op.html">Ceph 集群运维</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">test</span></p>
+<p class="caption" role="heading"><span class="caption-text">云原生运维</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../test/intro_ceph.html">111</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../test/02.html">ceph 集群运维</a></li>
 </ul>
 
@@ -286,8 +286,28 @@ ceph-deploy<span class="w"> </span>osd<span class="w"> </span>create<span class=
 </div>
 </section>
 </section>
+<section id="dashboard">
+<h3>3.7 启用Dashboard<a class="headerlink" href="#dashboard" title="Link to this heading"></a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># 在所有 mgr 节点安装dashboard 软件包</span>
+sudo<span class="w"> </span>yum<span class="w"> </span>install<span class="w"> </span>ceph-mgr-dashboard<span class="w"> </span>-y
+<span class="c1"># 启用 ceph mgr dashboard</span>
+ceph<span class="w"> </span>mgr<span class="w"> </span>module<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>dashboard
+<span class="c1"># 创建自签名证书</span>
+ceph<span class="w"> </span>config<span class="w"> </span><span class="nb">set</span><span class="w"> </span>mgr<span class="w"> </span>mgr/dashboard/ssl<span class="w"> </span><span class="nb">false</span>
+ceph<span class="w"> </span>mgr<span class="w"> </span>services
+<span class="o">{</span>
+<span class="w">    </span><span class="s2">&quot;dashboard&quot;</span>:<span class="w"> </span><span class="s2">&quot;http://ceph-node02:8080/&quot;</span>
+<span class="o">}</span>
+<span class="c1"># 创建用户</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;admin&quot;</span><span class="w">  </span>&gt;<span class="w"> </span>~/password.txt
+ceph<span class="w"> </span>dashboard<span class="w"> </span>ac-user-create<span class="w"> </span>admin<span class="w"> </span>-i<span class="w"> </span>~/password.txt<span class="w"> </span>administrator
+</pre></div>
+</div>
+<p><img alt="img.png" src="ceph/img.png" /></p>
+</section>
+</section>
 <section id="id9">
-<h3>3.7 验证集群<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<h2>4. 验证集群<a class="headerlink" href="#id9" title="Link to this heading"></a></h2>
 <p>通过 ceph -s 命令验证， 如果没有 ceph 命令则需要安装 ceph-common ，为了能让 ceph-admin 也能执行ceph -s命令，我们需要安装 ceph-common 命令，并且通过 ceph-deploy admin推送配置文件给 ceph-admin,并设置cephadm 对 配置文件有可读权限</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># 推送配置文件到 ceph-admin，此处为ceph-node01，可忽略</span>
 sudo<span class="w"> </span>yum<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>ceph-common
@@ -318,14 +338,13 @@ sudo<span class="w"> </span>setfacl<span class="w"> </span>-m<span class="w"> </
 </div>
 </section>
 </section>
-</section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../index.html" class="btn btn-neutral float-left" title="&lt;no title&gt;" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="02.html" class="btn btn-neutral float-right" title="Ceph 集群运维" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="ceph_cluster_op.html" class="btn btn-neutral float-right" title="Ceph 集群运维" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

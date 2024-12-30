@@ -163,7 +163,26 @@ ceph-deploy osd create ceph-node01 --data /dev/sdb
 ceph-deploy osd create ceph-node01 --data /dev/sdc
 ```
 
-### 3.7 验证集群
+### 3.7 启用Dashboard
+
+```shell
+# 在所有 mgr 节点安装dashboard 软件包
+sudo yum install ceph-mgr-dashboard -y
+# 启用 ceph mgr dashboard
+ceph mgr module enable dashboard
+# 创建自签名证书
+ceph config set mgr mgr/dashboard/ssl false
+ceph mgr services
+{
+    "dashboard": "http://ceph-node02:8080/"
+}
+# 创建用户
+echo "admin"  > ~/password.txt
+ceph dashboard ac-user-create admin -i ~/password.txt administrator
+```
+![img.png](imgs/ceph-dashboard.png)
+
+## 4. 验证集群
 
 通过 ceph -s 命令验证， 如果没有 ceph 命令则需要安装 ceph-common ，为了能让 ceph-admin 也能执行ceph -s命令，我们需要安装 ceph-common 命令，并且通过 ceph-deploy admin推送配置文件给 ceph-admin,并设置cephadm 对 配置文件有可读权限
 

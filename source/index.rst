@@ -9,12 +9,12 @@
    :caption:  分布式存储
 
    ceph/ceph_cluster_setup.md
-   ceph/02.md
+   ceph/ceph_cluster_op.md
 
 
 .. toctree::
    :maxdepth: 2
-   :caption:  test
+   :caption:  云原生运维
 
-   test/intro_ceph.md
+   /intro_ceph.md
    test/02.md
