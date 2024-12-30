@@ -78,6 +78,8 @@ sudo yum install -y ceph-deploy python-setuptools python2-subprocess32
 
 ### 3.3 创建 Monitor 节点
 
+ceph-mon 监视器，用于维护集群状态图。通常需要三个节点实现冗余和高可用。推荐数量为3,5,7,9...。
+
 Ceph 存储集群需要至少运行一个 Ceph Monitor和一个Ceph Manager，生产环境中，为了实现高可用性，Ceph存储集群通常运行多个监视器，以免单监视器整个存储集群崩溃。Ceph使用Paxos算法，该算法需要半数以上的监视器（大于n/2，其中n为总监视器数量）才能形成法定人数。尽管此非必需，但奇数个监视器往往更好。使用下面的命令，可以将 ceph-node01、ceph-node02、 ceph-node03运行为 Monitor 节点。
 
 ```shell
@@ -112,6 +114,7 @@ ceph-deploy admin ceph-node01 ceph-node02 ceph-node03
 ```
 ### 3.3 创建 Mgr 节点
 
+ceph-mgr 负载跟踪运行时指标和Ceph集群的当前状态，包括存储利用率，当前性能指标，系统负载等。
 对于Luminious+版本 或以后的版本，必须配置Manager节点，启动ceph-mgr进程，否则ceph是不健康的不完整的。Ceph Manager守护进程以“Active/Standby”模式运行，部署其它ceph-mgr守护程序可确保在Active节点或其上的 ceph-mgr守护进程故障时，其中的一个Standby实例可以在不中断服务的情况下接管其任务。 Mgr 是一个无状态的服务，所以我们可以随意添加其个数，通常而言，使用 2 个节点即可。
 
 ```shell
@@ -127,13 +130,15 @@ ceph-deploy rgw create ceph-node01 ceph-node03
 
 ### 3.5 创建 Mds 节点
 
-创建mds，使用cephfs文件系统服务时，需安装mds。作用：数据元服务。
+ceph-mds 元数据服务，使用cephfs文件系统服务时，需安装mds。
 
 ```shell
 ceph-deploy mds create ceph-node02 ceph-node03
 ```
 
 ### 3.6 添加 Osd
+
+ceph-osd 对象存储守护进程，用来存储数据，处理数据复制、恢复和重新平衡，至少需要三个 OSD来实现冗余和高可用性。
 
 在此 ceph 集群中，我们每台机器使用了三块硬盘 ，/dev/sda、/dev/sdb、/dev/sdc， 其中/dev/sda是系统盘，/dev/sdb、/dev/sdc,是我们接下要添加为 OSD 的磁盘.
 

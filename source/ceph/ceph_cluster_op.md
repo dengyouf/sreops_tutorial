@@ -39,5 +39,6 @@ ceph df
 ceph osd dump|grep "replicated size"
 
 # 设置副本数
+ ceph osd pool set mypool size 2
 ```
  
