@@ -1,0 +1,2 @@
+- ./make clean
+- sphinx-autobuild.exe source build

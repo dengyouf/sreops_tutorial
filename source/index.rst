@@ -16,5 +16,12 @@
    :maxdepth: 2
    :caption:  云原生运维
 
-   /intro_ceph.md
-   test/02.md
+   kubernetes/kubeadm_cluster_setup.md
+
+.. toctree::
+   :maxdepth: 2
+   :caption:  系统运维
+
+   linux/shell.md
+
+
