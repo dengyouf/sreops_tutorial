@@ -130,7 +130,7 @@ cat > /etc/systemd/system/docker.service.d/proxy.conf << EOF
 [Service]
 Environment="HTTP_PROXY=http://172.16.192.1:7890/"
 Environment="HTTPS_PROXY=http://172.16.192.1:7890/"
-Environment="NO_PROXY=localhost,127.0.0.1,.linux.io,172.17.0.0/16"
+Environment="NO_PROXY=localhost,127.0.0.1,.linux.io,10.244.0.0/16"
 EOF
 systemctl daemon-reload && systemctl restart docker
 docker pull registry.k8s.io/pause:3.6
@@ -296,6 +296,16 @@ k8s-master01   Ready    control-plane   18m   v1.28.6
 k8s-worker01   Ready    <none>          15m   v1.28.6
 k8s-worker02   Ready    <none>          14m   v1.28.6
 k8s-worker03   Ready    <none>          14m   v1.28.6
+```
+### 4.5 启用IPVS模式
+
+```shell
+kubectl  edit cm kube-proxy -n kube-system
+...
+    metricsBindAddress: ""
+    mode: "ipvs"
+    
+kubectl  delete pod -l k8s-app=kube-proxy -n kube-system
 ```
 
 ## 5. 验证集群
