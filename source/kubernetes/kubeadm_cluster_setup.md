@@ -360,7 +360,7 @@ Address 1: 10.111.44.183 myapp.default.svc.cluster.local
 
 ## 6 插件安装
 
-### 6.2 Metrics-Server 安装
+### 6.1 Metrics-Server 安装
 
 ```shell
 wget https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
@@ -385,7 +385,7 @@ k8s-worker02   52m          1%     1401Mi          17%
 k8s-worker03   44m          1%     1396Mi          17%
 ```
 
-### 6.3 Dashboard 安装
+### 6.2 Dashboard 安装
 
 部署 dashboard
 
