@@ -17,7 +17,9 @@
    :caption:  云原生运维
 
    kubernetes/kubeadm_cluster_setup.md
+   kubernetes/storage_for_k8s.md
    kubernetes/network_by_ingress.md
+
 
 .. toctree::
    :maxdepth: 2
