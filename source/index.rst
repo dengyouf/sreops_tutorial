@@ -26,5 +26,6 @@
    :caption:  系统运维
 
    linux/shell.md
+   kvm/kvm_setup.md
 
 
