@@ -37,7 +37,7 @@ public class Hello {
 
 ![img_4.png](imgs/idea04.png)
 
-## 2. Java语法基础
+## 2. 基础语法
 
 ### 2.1 常量
 
@@ -531,7 +531,7 @@ public class DemoBreak {
 4
 ```
 
-### 3. 数组
+## 3. 数组
 
 
 
