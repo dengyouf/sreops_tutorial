@@ -28,4 +28,10 @@
    linux/shell.md
    kvm/kvm_setup.md
 
+.. toctree::
+   :maxdepth: 2
+   :caption:  编程语言
+
+   java/java_basic.md
+
 
