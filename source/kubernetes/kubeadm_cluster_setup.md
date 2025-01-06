@@ -1,4 +1,4 @@
-# Kubernetes 集群安装
+# Kubeadm
 
 ## 1. Kubeadm 安装 kubernetes集群
 
