@@ -289,7 +289,44 @@ or other application using the libvirt API.
 </domain>
 ```
 
+## 4. 虚拟机克隆
 
+基于安装好的 ubuntu20.04 虚拟机进行机器克隆
+
+### 4.1 查看模版虚拟机的状态
+
+```shell
+
+~$ virsh  list --all
+ Id   Name          State
+------------------------------
+ -    ubuntu20.04   shut off
+```
+
+### 4.2 克隆虚拟机
+
+```shell
+~$ virt-clone --auto-clone -o ubuntu20.04 -n k8s-master01
+```
+
+### 4.2 定制虚拟机
+
+- 安装 libguestfs-tools
+
+```shell
+~$ sudo apt install libguestfs-tools
+```
+
+- 修改主机IP地址和主机名
+
+```shell
+# 192.168.1.254 为模版机器 IP
+~$ sudo virt-sysprep  \
+--operations defaults,machine-id,-ssh-userdir,-lvm-uuids \
+--hostname k8s-master01 \
+--run-command "sed -i 's@192.168.1.254@192.168.1.11@g' /etc/netplan/00-installer-config.yaml && dpkg-reconfigure openssh-server" \
+-d k8s-master01
+```
 
 
 

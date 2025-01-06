@@ -1,5 +1,7 @@
 # Kubernetes 集群安装
 
+## 1. Kubeadm 安装 kubernetes集群
+
 基于 Kubeadm 部署Kubernetes集群。操作系统为 Ubuntu 20.04 LTS，用到的各相关程序版本如下：
 
 - kubernetes: v1.28.6
@@ -15,7 +17,7 @@
 | k8s-worker03 | 172.16.192.43 | worker |
 
 
-## 1. 安装环境准备
+### 1.1 安装环境准备
 
 ```shell
 # 主机名解析
@@ -81,7 +83,7 @@ bash /etc/modules-load.d/ipvs.conf
 lsmod | grep -e ip_vs -e nf_conntrack_ipv4
 ```
 
-## 2. 安装容器运行时
+### 1.2 安装容器运行时
 
 准备 docker 源
 
@@ -138,7 +140,7 @@ docker pull registry.k8s.io/pause:3.6
 
 
 
-## 3. 安装 cri-dockerd
+### 1.3. 安装 cri-dockerd
 
 
 
@@ -146,7 +148,7 @@ docker pull registry.k8s.io/pause:3.6
 
 ```
 
-## 4. 安装 Kubernetes
+### 1.4. 安装 Kubernetes
 
 准备 kubernetes 源
 
@@ -163,7 +165,7 @@ apt-cache madison kubeadm
 apt install -y kubeadm=1.28.6-1.1 kubelet=1.28.6-1.1 kubectl=1.28.6-1.1
 ```
 
-### 4.1 拉取镜像
+#### 1.4.1 拉取镜像
 
 拉取镜像 
 ```shell
@@ -172,7 +174,7 @@ apt install -y kubeadm=1.28.6-1.1 kubelet=1.28.6-1.1 kubectl=1.28.6-1.1
 --cri-socket=unix:///var/run/cri-dockerd.sock
 ```
 
-### 4.2 初始化 master
+#### 1.4.2 初始化 master
 
 配置cri-docker中pause容器
 
@@ -240,7 +242,7 @@ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ```
 
-### 4.3 加入 worker
+#### 1.4.3 加入 worker
 
 ```shell
 kubeadm join k8s.linux.io:6443 --token optd4c.4m7ig7i2153pzwrg \
@@ -255,7 +257,7 @@ k8s-worker02   NotReady   <none>          59s    v1.28.6
 k8s-worker03   NotReady   <none>          43s    v1.28.6
 ```
 
-### 4.4 安装网络插件
+#### 1.4.4 安装网络插件
 
 ```shell
 wget https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
@@ -297,7 +299,7 @@ k8s-worker01   Ready    <none>          15m   v1.28.6
 k8s-worker02   Ready    <none>          14m   v1.28.6
 k8s-worker03   Ready    <none>          14m   v1.28.6
 ```
-### 4.5 启用IPVS模式
+#### 1.4.5 启用IPVS模式
 
 ```shell
 kubectl  edit cm kube-proxy -n kube-system
@@ -308,9 +310,9 @@ kubectl  edit cm kube-proxy -n kube-system
 kubectl  delete pod -l k8s-app=kube-proxy -n kube-system
 ```
 
-## 5. 验证集群
+### 1.5. 验证集群
 
-### 5.1 验证网络
+#### 1.5.1 验证网络
 
 创建 Deployment 和 Service 资源
 
@@ -348,7 +350,7 @@ myapp-5d9c4b4647-66xvz
 
 > 注意：Service IP 和 NodePort 仅是网络规则，所以不支持ping， 但是支持telnet
 
-### 5.2 验证DNS
+#### 1.5.2 验证DNS
 
 ```shell
 ~#  kubectl  get svc -n kube-system -o wide
@@ -368,9 +370,9 @@ Name:      myapp.default.svc.cluster.local
 Address 1: 10.111.44.183 myapp.default.svc.cluster.local
 ```
 
-## 6 插件安装
+### 1.6 插件安装
 
-### 6.1 Metrics-Server 安装
+#### 1.6.1 Metrics-Server 安装
 
 ```shell
 wget https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
@@ -395,7 +397,7 @@ k8s-worker02   52m          1%     1401Mi          17%
 k8s-worker03   44m          1%     1396Mi          17%
 ```
 
-### 6.2 Dashboard 安装
+#### 1.6.2 Dashboard 安装
 
 部署 dashboard
 
