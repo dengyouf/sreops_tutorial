@@ -2,20 +2,20 @@
 
 ## 1. Idea 使用
 
-- 新建项目-basecode
+### 1.1 新建项目-basecode
 
 ![img.png](imgs/idea00.png)
 
-- 新建模块-day01
+### 1.2 新建模块-day01
 
 ![img_1.png](imgs/idea01.png)
 ![img_2.png](imgs/idea02.png)
 
-- 新建包-io.linux.io
+### 1.3 新建包-io.linux.io
 
 ![img.png](img.png)
 
-- 新建类-Hello
+### 1.4 新建类-Hello
 
 ![img_1.png](img_1.png)
 
@@ -33,9 +33,48 @@ public class Hello {
 }
 ```
 
-- 设置 SDK 和 语言级别
+### 1.5 设置 SDK 和 语言级别
 
 ![img_4.png](imgs/idea04.png)
+
+### 1.5 文档注释
+
+给类或者方法添加注释，注释的内容会产生在生成的 java 文档中
+![img_2.png](img_2.png)
+
+```java
+/***
+ * @className: ${NAME}
+ * @author: dengyouf
+ * @description:
+ * @date: ${DATE} ${TIME}
+ * @version: 0.1
+ * @since： jdk11
+ */
+```
+
+```java
+/***
+ * @className: DemoTest
+ * @author: dengyouf
+ * @description: 文档案例
+ * @date: 2025/1/8 15:55
+ * @version: 0.1
+ * @since： jdk11
+ */
+public class DemoTest {
+    public static void main(String[] args) {
+        System.out.println("Hello World");
+    }
+}
+```
+本地化输出文档： `-encoding UTF-8 -charset UTF-8`
+
+![img_3.png](img_3.png)
+![img_4.png](img_4.png)
+
+
+
 
 ## 2. 基础语法
 
@@ -869,7 +908,7 @@ public class DemoArray {
 
 ```java
 public class DemoMethod {
-
+    
     public static void main(String[] args) {
         // 调用方法
         String res = Hello("dengyouf");
@@ -877,12 +916,174 @@ public class DemoMethod {
     }
     
     // 定义方法 接收字符串做参数，返回字符串
+    // 修饰符      返回值类型 方法名称(参数列表)
     public static String Hello(String name) {
         System.out.println("Hello " + name);
         return "Hello " + name;
     }
 }
 ```
+
+- void 不需要返回值
+
+```java
+public class DemoMethod {
+
+    public static void main(String[] args) {
+       print_hello(5);
+    }
+    // 定义方法
+    public static void printHello(int n) {
+        for (int i = 0; i < n; i++) {
+            System.out.println(i + " hello world");
+        }
+    }
+}
+```
+
+### 4.2 方法的重载
+
+在同一个类中，允许存在一个以上同名方法，只要他们的参数个数或者参数类型不同即可。
+
+```java
+public class DemoMethod {
+
+    public static void main(String[] args) {
+       int res = sum(10, 20);
+       System.out.println(res);
+
+       int res2 = sum(10, 20, 30);
+       System.out.println(res2);
+    }
+
+    public static int sum(int a, int b) {
+        System.out.println("two sum ...");
+        return a + b;
+    }
+    // 参数个数不同
+    public static int sum(int a, int b, int c) {
+        System.out.println("three sum ...");
+        return a + b + c;
+    }
+}
+```
+
+### 4.3 方法的递归
+
+- 求 1~n 的和
+
+```java
+public class DemoMethod {
+
+    public static void main(String[] args) {
+        /**
+        * sum(10) = 10 + 9 +8 + ... + 1
+        * sum(10) = 10 + sum(9)
+        * ...
+        * sum(10) = 10 +9 +8 + ... + sum(1)
+        */
+        int res = sum(10);
+        System.out.println(res);
+
+    }
+
+    public static int sum(int n) {
+        if (n==1) {
+            return 1;
+        }
+        return n+sum(n-1);
+    }
+
+}
+``` 
+
+### 4.4 方法练习
+
+- 百钱买百鸡
+
+```java
+public class DemoMethod {
+    // 3文钱1只公鸡，2文钱一只母鸡，1文钱3只小鸡，100文买100只鸡
+    public static void main(String[] args) {
+        Count();
+    }
+    public static void Count() {
+        for( int a=0;a<100/3;a++) {
+            for (int b=0;b<100/2;b++) {
+                for (int c=0;c<100;c++) {
+                    if (c%3!=0) {
+                        continue;
+                    }
+                    int sumPrice = 3*a+2*b+c/3;
+                    if (sumPrice == 100 && a+b+c==100) {
+                        System.out.printf("总共有：%d 只公鸡,%d只母鸡， %d只小鸡\n", a,b,c);
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+- 斐波那契数列
+
+```java
+import java.util.Arrays;
+
+public class DemoMethod {
+
+    public static void main(String[] args) {
+
+        int [] fibArry = new int[10];
+        for (int i=0;i<fibArry.length;i++) {
+            fibArry[i] = fib(i);
+        }
+        System.out.println(Arrays.toString(fibArry));
+    }
+
+    public static  int  fib(int n) {
+        if (n <2){
+            return 1;
+        }
+        return fib(n-1) + fib(n-2);
+    }
+}
+```
+
+- 汉诺塔问题
+
+```java
+import java.util.Arrays;
+
+public class DemoMethod {
+
+    public static void main(String[] args) {
+        hanio(5, 'A', 'B', 'C');
+    }
+
+    /**
+     * @param n 代表圆盘的数量
+     * @param A 第一根柱子
+     * @param B 第二根柱子 辅助
+     * @param C 第三根柱子
+     */
+    public static  void hanio(int n, char A, char B, char C) {
+        if (n == 1) {
+            System.out.println(A +  "->" + C);
+        }else {
+            // n-1个 从A移动到B， C是辅助
+            hanio( n-1, A, C, B);
+            System.out.println(A +  "->" + C);
+            // 从B移动到C， A是辅助
+            hanio(n-1, B,A, C);
+        }
+    }
+}
+
+```
+
+
+
 
 
 
