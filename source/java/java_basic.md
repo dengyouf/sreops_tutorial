@@ -533,6 +533,357 @@ public class DemoBreak {
 
 ## 3. 数组
 
+### 3.1 数组的定义
+
+数组是装着相同数据类型的元素的容器，如果要使用数组，需要在声明后，进行初始化。
+
+```java
+import java.util.Arrays;
+
+public class DemoArray {
+    public static void main(String[] args) {
+
+        // 声明并初始化
+        int[] arr = new int[5];
+        arr[0] = 10;
+        arr[1] = 20;
+        arr[arr.length-1] = 100;
+
+        System.out.println(Arrays.toString(arr));
+        // 静态初始化
+        int [] arr2 = new int[]{4, 5, 6, 7};
+        arr2[2] = 200;
+        System.out.println(Arrays.toString(arr2));
+
+        // 静态数组
+        int [] arr3 = {1, 2, 3, 4};
+        System.out.println(Arrays.toString(arr3));
+    }
+}
+```
+
+### 3.2 数组的遍历
+
+通过 for 循环进行遍历
+
+```java
+public class DemoArray {
+    public static void main(String[] args) {
+
+        int [] arr3 = {1, 2, 3, 4};
+        for (int i = 0; i < arr3.length; i++) {
+            System.out.println(arr3[i]);
+        }
+
+    }
+}
+```
+
+```java
+public class DemoArray {
+    public static void main(String[] args) {
+        // 静态数组
+        int [] arr3 = {1, 2, 3, 4};
+        
+        // 仅支持变量，不支持修改数组元素
+        for (int ele : arr3) {
+            System.out.println(ele);
+        }
+    }
+}
+
+```
+
+### 3.3 数组的最值
+
+```java
+public class DemoArray {
+    public static void main(String[] args) {
+        // 静态数组
+        int [] arr = {15, 23, 19, 45, 68};
+
+        int max = arr[0];
+        for ( int ele : arr) {
+            if (ele > max) {
+                max = ele;
+            }
+        }
+        System.out.println(max);
+    }
+}
+```
+
+### 3.4 数组的扩容
+
+在Java中，数组是固定长度的，一旦创建就无法更改其长度。然而，在实际的编程过程中，我们可能会遇到需要动态扩展数组长度的需求，面对这种情况，有两种主要的处理方式：
+
+- 创建一个新的更大的数组，然后将原数组的元素复制到新数组中 
+
+```java
+import java.util.Arrays;
+
+public class DemoArray {
+    public static void main(String[] args) {
+        // 静态数组
+        int[] arr = {15, 23, 19, 45, 68};
+        // 扩容2倍
+        int[] new_arr = new int[arr.length * 2];
+        // arraycopy(源数组,从哪个元素开始copy, 目标数组，从哪个索引处开始, 拷贝长度)
+        System.arraycopy(arr, 0, new_arr, 0, arr.length);
+        System.out.println(Arrays.toString(arr));
+        System.out.println(Arrays.toString(new_arr));
+
+
+        int[] new_arr2 = Arrays.copyOf(arr, arr.length*2);
+        System.out.println(Arrays.toString(new_arr2));
+    }
+}
+```
+
+- 使用Java集合框架中的ArrayList类，它在内部使用数组存储元素，并自动处理数组扩容的操作
+
+```java
+```
+
+### 3.5 数组的反转
+
+- 定义新数组，通过索引组合新的数组
+
+```java
+import java.util.Arrays;
+
+public class DemoArray {
+    public static void main(String[] args) {
+        // 静态数组
+        int[] arr = {15, 23, 19, 45, 68};
+        int []reverse_arr = new int[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            reverse_arr[i] = arr[arr.length - 1 - i];
+        }
+        System.out.println(Arrays.toString(reverse_arr));
+    }
+}
+```
+
+- 通过min, max交换，反转数组
+
+```java
+import java.util.Arrays;
+
+public class DemoArray {
+    public static void main(String[] args) {
+        // 静态数组
+        int[] arr = {15, 23, 19, 45, 68};
+
+        for (int min =0, max = arr.length-1; min < max; min++, max--) {
+            int temp = arr[min];
+            arr[min] = arr[max];
+            arr[max] = temp;
+        }
+        System.out.println(Arrays.toString(arr));
+    }
+}
+```
+
+```java
+import java.util.Arrays;
+
+public class DemoArray {
+    public static void main(String[] args) {
+        // 静态数组
+        int[] arr = {15, 23, 19, 45, 68};
+        for (int i = 0; i < arr.length /2 +1; i++) {
+            int temp = arr[i];
+            arr[i] = arr[arr.length - 1 - i];
+            arr[arr.length - 1 - i] = temp;
+        }
+        System.out.println(Arrays.toString(arr));
+    }
+}
+```
+
+### 3.6 数组的查找
+
+- 依次查找，打印索引
+
+```java
+public class DemoArray {
+    public static void main(String[] args) {
+        // 静态数组
+        int[] arr = {15, 23, 19, 45, 68};
+
+        int num = 45;
+        // 依次查找
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == num) {
+                System.out.println(i);
+            }
+        }
+        
+        // 增强模式
+        int count = 0;
+        for (int ele : arr) {
+            if (ele == num) {
+                System.out.println(count);
+            }
+            count++;
+        }
+    }
+}
+```
+- 二分查找,要求数组是排序过的
+
+```java
+import java.util.Arrays;
+
+public class DemoArray {
+    public static void main(String[] args) {
+        // 二分查找
+        int[] arr = {7, 8, 6, 5, 4, 1, 9, 10, 2, 3};
+        Arrays.sort(arr);
+        System.out.println(Arrays.toString(arr));
+        // 要查找的数
+        int num = 10;
+        // 定义最小、最大索引
+        int min =0, max = arr.length-1;
+        // 中间索引
+        int mid = (min+max)/2;
+
+        // 标记
+        boolean flag = true;
+        while (arr[mid] != num) {
+            if (arr[mid] > num) {
+                max = mid -1;
+            }
+            if (arr[mid] < num) {
+                min = mid+1;
+            }
+            mid = (min+max)/2;
+            if (min > max) {
+                System.out.println("查无此数");
+                flag = false;
+                break;
+            }
+        }
+
+        if (flag){
+            System.out.println("查找的索引为：" + mid);
+        }
+    }
+}
+```
+
+### 3.7 数组的排序
+
+- 选择排序
+
+```java
+import java.util.Arrays;
+
+public class DemoArray {
+    public static void main(String[] args) {
+        // 选择排序
+        int[] arr = {7, 8, 6, 5, 4, 1, 9, 10, 2, 3};
+        for (int i = 0; i < arr.length-1; i++) {
+            for (int j = i+1; j < arr.length; j++) {
+                if (arr[i] > arr[j]) {
+                   int temp = arr[i];
+                   arr[i] = arr[j];
+                   arr[j] = temp;
+                }
+            }
+        }
+        System.out.println(Arrays.toString(arr));
+    }
+}
+```
+
+- 冒泡排序
+
+```java
+import java.util.Arrays;
+
+public class DemoArray {
+    public static void main(String[] args) {
+        // 冒泡排序
+        int[] arr = {7, 8, 6, 5, 4, 1, 9, 10, 2, 3};
+        int temp;
+        for (int i = 0; i < arr.length-1; i++) {
+            boolean flag = false;
+            for (int j = 0; j < arr.length-1-i; j++) {
+                if (arr[j] > arr[j+1]) {
+                    temp = arr[j];
+                    arr[j] = arr[j+1];
+                    arr[j+1] = temp;
+                    flag = true;
+                }
+            }
+            if (!flag) {
+                break;
+            }
+        }
+        System.out.println(Arrays.toString(arr));
+    }
+}
+```
+
+### 3.8 二维数组
+
+存放着一维数组的数组，二维数组的元素为一维数组。
+
+```java
+import java.util.Arrays;
+
+public class DemoArray {
+    public static void main(String[] args) {
+        // 动态初始化
+        int[][] arr = new int[3][4];
+        //int arr[][] = new int[3][3];
+        System.out.println(Arrays.deepToString(arr));
+        arr[0][0] = 10;
+        arr[1][0] = 10;
+        arr[2][0] = 10;
+        System.out.println(Arrays.deepToString(arr));
+
+        // 静态初始化
+        int arr2[][] ={{1,2,3,4}, {2,2,3,4}, {3,2,3,4}};
+        System.out.println(Arrays.deepToString(arr2));
+    }
+}
+```
+
+## 4 方法
+
+### 4.1 方法的定义和调用
+
+方法本质上是一段封装好的代码块，通过方法标识，对方法进行调用。可接收参数，可有返回值。
+
+- 修饰符：`public static`
+
+```java
+修饰符 返回值类型 方法名称(参数列表) {
+    方法体;
+    return 返回值;
+}
+```
+
+```java
+public class DemoMethod {
+
+    public static void main(String[] args) {
+        // 调用方法
+        String res = Hello("dengyouf");
+        System.out.println(res);
+    }
+    
+    // 定义方法 接收字符串做参数，返回字符串
+    public static String Hello(String name) {
+        System.out.println("Hello " + name);
+        return "Hello " + name;
+    }
+}
+```
+
 
 
 
