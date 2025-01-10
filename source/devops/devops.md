@@ -1,23 +1,68 @@
-# 镜像仓库
+## 1 GitLab
 
-## 1 Harbor
+### 1.1 配置清华源
+```shell
+~# curl -fsSL https://packages.gitlab.com/gpg.key | gpg --dearmor > /usr/share/keyrings/gitlab_gitlab-ce-archive-keyring.gpg
+~# cat >>  /etc/apt/sources.list.d/gitlab-ce.list << EOF
+deb [signed-by=/usr/share/keyrings/gitlab_gitlab-ce-archive-keyring.gpg] https://mirrors.tuna.tsinghua.edu.cn/gitlab-ce/ubuntu focal main
+EOF
+~# apt update
+```
+
+### 1.2 安装gitLab
+
+```shell
+~# apt install gitlab-ce
+```
+
+### 1.3 配置gitlab
+
+```shell
+echo  "192.168.240 gitlab.linux.io"  >> /etc/hosts
+vim /etc/gitlab/gitlab.rb
+external_url 'http://gitlab.linux.io'
+```
+
+### 1.4 重启服务
+
+```shell
+~# gitlab-ctl  reconfigure
+~# gitlab-ctl  restart
+```
+
+### 1.5 获取初始密码
+
+```shell
+~# cat /etc/gitlab/initial_root_password
+# WARNING: This value is valid only in the following conditions
+#          1. If provided manually (either via `GITLAB_ROOT_PASSWORD` environment variable or via `gitlab_rails['initial_root_password']` setting in `gitlab.rb`, it was provided before database was seeded for the first time (usually, the first reconfigure run).
+#          2. Password hasn't been changed manually, either via UI or via command line.
+#
+#          If the password shown here doesn't work, you must reset the admin password following https://docs.gitlab.com/ee/security/reset_user_password.html#reset-your-root-password.
+
+Password: ZjcKz389K26BKk9+N/+f8omY1YEPyi2noszubzh9Asc=
+
+# NOTE: This file will be automatically deleted in the first reconfigure run after 24 hours.
+```
+
+## 3 Harbor
 
 
-### 1.1 Prerequisites
+### 3.1 Prerequisites
 
 > 官网： `https://goharbor.io/docs/2.12.0/install-config/installation-prereqs/`
 
 ![img.png](img.png)
 ![img_1.png](img_1.png)
 
-### 1.2 Harbor Installation Prerequisites
+### 3.2 Harbor Installation Prerequisites
 
 ```shell
 ~# hostnamectl  set-hostname reg.linux.io
 ~# ufw disable
 ~# echo '192.168.1.250 reg.linux.io' >> /etc/hosts
 ```
-### 1.3 Install docker
+### 3.3 Install docker
 
 > 阿里云： `https://developer.aliyun.com/mirror/docker-ce?spm=a2c6h.13651102.0.0.3e221b11McV0m7`
 
@@ -66,7 +111,7 @@ sudo apt install docker-ce=5:26.1.3-1~ubuntu.20.04~focal
 # docker compose version
 Docker Compose version v2.32.1
 ```
-### 1.4 Install docker-compose (可选)
+### 3.4 Install docker-compose (可选)
 
 > 官网： `https://docs.docker.com/compose/install/#install-compose`
 
@@ -82,7 +127,7 @@ CPython version: 3.6.7
 OpenSSL version: OpenSSL 1.1.0f  25 May 2017
 ```
 
-### 1.5 Download and Unpack the Installer
+### 3.5 Download and Unpack the Installer
 
 ```shell
 ~# wget https://github.com/goharbor/harbor/releases/download/v2.12.1/harbor-offline-installer-v2.12.1.tgz
@@ -90,7 +135,7 @@ OpenSSL version: OpenSSL 1.1.0f  25 May 2017
 
 ```
 
-### 1.6 Configure HTTPS Access to Harbor
+### 3.6 Configure HTTPS Access to Harbor
 
 ```
 ~]# mkdir /opt/harbor/ssl
@@ -148,7 +193,7 @@ ssl]# openssl x509 -req -sha512 -days 3650 \
     -out reg.linux.io.crt
 ```
 
-### 1.7 Configure the Harbor YML File
+### 3.7 Configure the Harbor YML File
 
 ```shell
 /opt/harbor/ssl# cp /opt/harbor/harbor.yml.tmpl /opt/harbor/harbor.yml
@@ -168,7 +213,7 @@ https:
   private_key: /opt/harbor/ssl/reg.linux.io.key
 ```
 
-### 1.8 Run the `prepare` script to enable HTTPS
+### 3.8 Run the `prepare` script to enable HTTPS
 
 ```shell
 ~# cd /opt/harbor/ && ./prepare
@@ -198,7 +243,7 @@ ExecStop=/usr/bin/docker compose -f /opt/harbor/docker-compose.yml down
 WantedBy=multi-user.target
 ```
 
-### 1.9 Provide the Certificates to Harbor and Docker
+### 3.9 Provide the Certificates to Harbor and Docker
 
 ```shell
 /opt/harbor# cd ssl/
@@ -219,7 +264,7 @@ https://docs.docker.com/engine/reference/commandline/login/#credential-stores
 Login Succeeded
 ```
 
-### 1.10 Upload image to Harbor
+### 3.10 Upload image to Harbor
 
 ```shell
 docker pull ikubernetes/myapp:v1
@@ -227,14 +272,14 @@ docker tag ikubernetes/myapp:v1  reg.linux.io/library/myapp:v1
 docker push reg.linux.io/library/myapp:v1
 ```
 
-## 2 docker-register
+## 4 Docker-Register
 
-### 2.1 启动register
+### 4.1 启动register
 
 ```shell
 ~# docker run -d --name docker-register  -p 5000:5000 -v /data/registry:/var/lib/registry registry:2
 ```
-### 2.2 push/pull 镜像报错解决
+### 4.2 push/pull 镜像报错解决
 
 ```shell
 ~# docker tag nginx:1.20 192.168.1.250:5000/nginx:1.20

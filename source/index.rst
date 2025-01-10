@@ -7,7 +7,7 @@
    :maxdepth: 2
    :caption:  自动化运维
 
-   devops/harbor_setup.md
+   devops/devops.md
 
 .. toctree::
    :maxdepth: 2
