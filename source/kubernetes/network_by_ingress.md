@@ -1,4 +1,4 @@
-# Ingress七层调度和负载均衡
+# Ingress
 
 ## 1. Ingress 安装
 

@@ -891,7 +891,7 @@ public class DemoArray {
 }
 ```
 
-## 4 方法
+## 4. 方法
 
 ### 4.1 方法的定义和调用
 
@@ -1079,8 +1079,186 @@ public class DemoMethod {
         }
     }
 }
-
 ```
+
+## 5. 面向对象
+
+对象是一组属性(成员变量)和行为(成员方法)的集合
+
+### 5.1 定义类对象
+
+定义一个Student 类，其具有姓名，年龄，性别和吃，走相关属性和方法
+
+```java
+package io.linux.obj;
+
+public class Student {
+    String name;
+    int age;
+    String gender;
+
+    // 去掉static 则为类方法
+    public void eat() {
+        System.out.println("eating...");
+    }
+    public void walk() {
+        System.out.println("walking...");
+    }
+}
+```
+
+### 5.2 类对象调用
+
+类通过 new实例化为一个对象
+
+```java
+package io.linux.obj;
+
+public class DemoStudent {
+
+    public static void main(String[] args) {
+        Student student = new Student();
+        student.eat();
+    }
+
+}
+```
+
+### 5.3 类构造方法
+
+方法名同类名，没有返回值，连void都没有，为了兼容，一般都需要提供有参和无参构造函数
+
+```java
+package io.linux.obj;
+
+public class Student {
+    String name;
+    int age;
+    String gender;
+
+    // 无参构造
+    public Student() {
+    }
+    // 有参构造
+    public Student(String name, int age, String gender) {
+        this.name = name;
+        this.age = age;
+    }
+    public void eat() {
+        System.out.println("eating...");
+    }
+    public void print(){
+        System.out.println("student "+name+" age "+age+" gender "+gender);
+    }
+}
+```
+有参构造调用方式
+
+```java
+package io.linux.obj;
+
+public class DemoStudent {
+
+    public static void main(String[] args) {
+        Student student = new Student();
+        student.name = "dengyouf";
+        student.eat();
+        student.print();
+        // 有参构造
+        Student student2 = new Student("admin", 18, "女");
+        student2.print();
+
+    }
+}
+```
+
+### 5.4 类的封装性
+
+通过修饰符 private 对类的成员进行私有化封装,private修饰的成员只能在本类中使用，提供对应的 `getXxx` 方法和`setXxx` 方法，这种思想就是封装的一种实现。
+
+
+- 将不需要对外提供的内容隐藏起来
+- 把属性或者方法隐藏，提供公共的方法进行访问
+
+```JAVA
+public class Student {
+    ...
+    private int age;
+
+    public void setAge(int age) {
+        if (age<0 || age>120) {
+            this.age = 18;
+        }else {
+            this.age = age;
+        }
+    }
+    public int getAge() {
+        return this.age;
+    }
+    ...
+}
+```
+
+### 5.5 权限修饰符
+
+| 关键字       | 本类中 | 子类中      | 同包类中 | 其他类中     |
+|-----------|-----|----------| --- |----------|
+| public    | √   | √        | √  | √        |
+| protected | √  | √        | √  | × |
+| 默认        | √ | √ (同包子类) | √  | × |
+| private   | √ | × |   ×|  ×|
+
+### 5.6 类的继承
+
+通过关键字 `extends` 实现继承，提高代码的可复用性，简化代码。
+
+- 父类/超类： superclass
+- 子类/派生类： 子类通过 extends 继承父类的 public 属性 
+
+> java 有多层继承，但是没有多继承(一个类只有一个父类)
+
+```java
+package io.linux.obj;
+
+public class DemoInherit {
+    public static void main(String[] args) {
+        TomCat tomcat =  new TomCat("bibi", 2);
+        tomcat.eating("bibi");
+        tomcat.sleeping(3);
+    }
+}
+
+// 父类
+class Animal {
+    String name;
+    int age;
+
+    public Animal(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public void  eating(String name) {
+        System.out.println( name + " is eating");
+    }
+}
+// 子类
+class Cat extends Animal {
+    public Cat(String name, int age) {
+        super(name, age);
+    }
+    public void sleeping(int hours) {
+        System.out.println( name + " is sleeping " + hours + " hours");
+    }
+}
+// 多层继承
+class TomCat extends Cat {
+    public TomCat(String name, int age) {
+        super(name, age);
+    }
+}
+```
+
 
 
 
