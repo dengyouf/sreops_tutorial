@@ -3,7 +3,7 @@
 ## 1 Harbor
 
 
-### 1.1 安装依赖
+### 1.1 Prerequisites
 
 > 官网： `https://goharbor.io/docs/2.12.0/install-config/installation-prereqs/`
 
@@ -62,10 +62,15 @@ sudo apt install docker-ce=5:26.1.3-1~ubuntu.20.04~focal
 
 ~# systemctl  daemon-reload  && systemctl restart docker
 ```
-
-### 1.4 Install docker-compose
+```shell
+# docker compose version
+Docker Compose version v2.32.1
+```
+### 1.4 Install docker-compose (可选)
 
 > 官网： `https://docs.docker.com/compose/install/#install-compose`
+
+如果使用 docker compose v2 (docker-compose-plugin) 的话，不需要单独安装docker-compose 
 
 ```shell
 ~# sudo curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
@@ -170,6 +175,29 @@ https:
 ~# cd /opt/harbor/ && ./install.sh
 ```
 
+- stop harbor： `docker compose down -v `
+- start harbor : `docker compose up -d `
+
+```shell
+vim /lib/systemd/system/harbor.service
+[Unit]
+Description=Harbor
+After=docker.service systemd-networkd.service systemd-resolved.service
+Requires=docker.service
+Documentation=http://github.com/vmware/harbor
+ 
+[Service]
+Type=simple
+Restart=on-failure
+RestartSec=5
+ExecStart=/usr/bin/docker compose -f /opt/harbor/docker-compose.yml up
+ExecReload=/usr/bin/docker compose -f /opt/harbor/docker-compose.yml restart
+ExecStop=/usr/bin/docker compose -f /opt/harbor/docker-compose.yml down
+ 
+[Install]
+WantedBy=multi-user.target
+```
+
 ### 1.9 Provide the Certificates to Harbor and Docker
 
 ```shell
@@ -180,6 +208,7 @@ cp reg.linux.io.cert  /etc/docker/certs.d/reg.linux.io/
 cp reg.linux.io.key  /etc/docker/certs.d/reg.linux.io/
 cp ca.crt  /etc/docker/certs.d/reg.linux.io/
 ```
+
 ```shell
 ~#  docker login reg.linux.io -u admin -p Harbor12345
 WARNING! Using --password via the CLI is insecure. Use --password-stdin.
@@ -197,3 +226,31 @@ docker pull ikubernetes/myapp:v1
 docker tag ikubernetes/myapp:v1  reg.linux.io/library/myapp:v1
 docker push reg.linux.io/library/myapp:v1
 ```
+
+## 2 docker-register
+
+### 2.1 启动register
+
+```shell
+~# docker run -d --name docker-register  -p 5000:5000 -v /data/registry:/var/lib/registry registry:2
+```
+### 2.2 push/pull 镜像报错解决
+
+```shell
+~# docker tag nginx:1.20 192.168.1.250:5000/nginx:1.20
+~# docker push 192.168.1.250:5000/nginx:1.20
+The push refers to repository [192.168.1.250:5000/nginx]
+Get "https://192.168.1.250:5000/v2/": http: server gave HTTP response to HTTPS client
+
+# 解决
+cat /etc/docker/daemon.json
+
+{
+    ...
+    "insecure-registries":["192.168.1.250:5000"]
+}
+~# docker push 192.168.1.250:5000/nginx:1.20
+~# curl http://192.168.1.250:5000/v2/_catalog
+{"repositories":["nginx"]}
+```
+
