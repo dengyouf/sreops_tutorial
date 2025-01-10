@@ -299,3 +299,73 @@ cat /etc/docker/daemon.json
 {"repositories":["nginx"]}
 ```
 
+## 5 Containerd 对接 Harbor
+
+> 前提： k8s节点hosts文件需要能解析Harbor域名：192.168.1.250 reg.linux.io
+
+```shell
+~# kubectl  edit cm/coredns -n kube-system
+apiVersion: v1
+data:
+  Corefile: |
+    .:53 {
+        errors
+        health {
+           lameduck 5s
+        }
+        ready
+        kubernetes cluster.local in-addr.arpa ip6.arpa {
+           pods insecure
+           fallthrough in-addr.arpa ip6.arpa
+           ttl 30
+        }
+        hosts {
+           192.168.1.250 reg.linux.io
+           fallthrough
+        }
+        prometheus :9153
+        ...
+    }
+    
+~# kubectl delete pod -n kube-system -l k8s-app=kube-dns
+```
+
+### 5.1 创建hosts.toml文件或者证书文件存储的目录
+
+首先我们需要创建hosts.toml文件或者证书文件存储的目录，这个创建的目录名称必须是Harbor的域名(如果不是则报x509)，然后将证书文件或者hosts.toml文件放入该目录下才会生效。
+
+```shell
+~# mkdir -pv /etc/containerd/certs.d/reg.linux.io
+```
+
+### 5.2 修改config.toml配置
+
+找到 `[plugins."io.containerd.grpc.v1.cri".registry]`下的config_path，然后指定证书存储目录,改完需重启containerd。
+```shell
+[plugins]
+    ...
+    [plugins."io.containerd.grpc.v1.cri".registry]
+        config_path = "/etc/containerd/certs.d"
+      [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
+        [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
+          endpoint = ["https://registry-1.docker.io"]
+```
+
+### 5.3 配置认证方式
+
+#### 5.3.1 忽略证书得方式
+
+- 忽略证书，就是我们只需要在/etc/containerd/certs.d/reg.linux.io/目录下面创建文件hosts.toml即可，不需要Harbor认证的自签名证书,无需重启containerd
+
+```shell
+cat >> /etc/containerd/certs.d/reg.linux.io/hosts.toml << EOF
+server = "https://reg.linux.io"
+
+[host."https://reg.linux.io"]
+  capabilities = ["pull", "resolve", "push"]
+  skip_verify = false
+  ca = ["ca.crt"]
+EOF
+```
+
+
