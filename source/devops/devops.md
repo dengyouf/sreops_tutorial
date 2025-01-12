@@ -341,19 +341,25 @@ data:
 ### 5.2 修改config.toml配置
 
 找到 `[plugins."io.containerd.grpc.v1.cri".registry]`下的config_path，然后指定证书存储目录,改完需重启containerd。
+
+根据 containerd 配置规则，当使用 config_path 指定了证书和私有仓库配置文件目录时，不允许再使用 mirrors 配置，解决办法有两种：
+- 删除 mirrors 配置，这里使用此红配置方式
+- 移除 config_path 并仅使用 mirrors
 ```shell
 [plugins]
     ...
     [plugins."io.containerd.grpc.v1.cri".registry]
         config_path = "/etc/containerd/certs.d"
-      [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
-        [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
-          endpoint = ["https://registry-1.docker.io"]
+#      [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
+#        [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
+#          endpoint = ["https://registry-1.docker.io"]
 ```
+![img_2.png](img_2.png)
+
 
 ### 5.3 配置认证方式
 
-#### 5.3.1 忽略证书得方式
+#### 5.3.1 忽略证书的方式
 
 - 忽略证书，就是我们只需要在/etc/containerd/certs.d/reg.linux.io/目录下面创建文件hosts.toml即可，不需要Harbor认证的自签名证书,无需重启containerd
 
@@ -368,4 +374,104 @@ server = "https://reg.linux.io"
 EOF
 ```
 
+#### 5.3.2 启用证书的方式
 
+需要把自签名Harbor域名的CA证书上传到/etc/containerd/certs.d/reg.linx.io/目录下
+
+```shell
+~# ls /etc/containerd/certs.d/reg.linux.io
+ca.crt  hosts.toml
+```
+
+在该目录下创建hosts.toml文件并指定CA证书
+
+```shell
+~# cat /etc/containerd/certs.d/reg.linux.io/hosts.toml 
+server = "https://reg.linux.io"
+[host."https://reg.linux.io"]
+  capabilities = ["pull", "resolve","push"]
+  skip_verify = false
+  ca = ["ca.crt"]
+```
+
+## 6 Kubernetes对接Harbor
+
+### 6.1 通过Secret使用镜像
+
+```shell
+~# kubectl create secret docker-registry harbor-secret \
+--docker-server=reg.linux.io \
+--docker-username=admin \
+--docker-password=Harbor12345 \
+-n default
+```
+
+```shell
+~# cat myapp.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: myapp
+  name: myapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: myapp
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      imagePullSecrets:
+      - name: harbor-secret
+      containers:
+      - image: reg.linux.io/privatelib/myapp:v1
+        name: myapp
+        resources: {}
+~# cat myapp.yaml |kubectl  apply -f -
+```
+
+### 6.1 通过ServviceAccount使用镜像
+
+```shell
+# 创建 sa
+~# cat serviceaccount-harbor.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: harbor-sa
+  namespace: default
+root@k8s-master01:~# kubectl  apply -f serviceaccount-harbor.yaml
+# patch 使用补丁修改、更新资源的字段
+~# kubectl patch serviceaccount harbor-sa -n default  -p '{"imagePullSecrets": [{"name": "harbor-secret"}]}'
+```
+
+```shell
+~# cat myapp.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: myapp
+  name: myapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: myapp
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      serviceAccount: harbor-sa
+      containers:
+      - image: reg.linux.io/privatelib/myapp:v1
+        name: myapp
+        resources: {}
+~# kubectl  apply -f myapp.yaml
+```
