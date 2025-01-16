@@ -1,4 +1,4 @@
-# Kubernetes Storage
+# Kubernetes CSI
 
 ## 1. NFS CSI driver for Kubernetes
 
