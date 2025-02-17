@@ -31,8 +31,13 @@ cat  >> /etc/hosts <<EOF
 EOF
 # 关闭防火墙
 ufw  disable
-# 禁用selinx
+# 禁用swap
+systemctl  --type swap
+    UNIT          LOAD   ACTIVE SUB    DESCRIPTION
+    dev-vda2.swap loaded active active Swap Partition
+systemctl  mask dev-vda2.swap
 sed  -ri  's@/.*swap.*@# &@' /etc/fstab && swapoff -a
+
 # 设置时区
 cp /usr/share/zoneinfo/Asia/Shanghai  /etc/localtime
  date -R
@@ -145,7 +150,20 @@ docker pull registry.k8s.io/pause:3.6
 
 
 ```shell
+wget https://github.com/Mirantis/cri-dockerd/releases/download/v0.3.8/cri-dockerd-0.3.8.amd64.tgz
+tar -xzvf cri-dockerd-0.3.8.amd64.tgz
+sudo install -m 0755 -o root -g root -t /usr/local/bin cri-dockerd/cri-dockerd
 
+wget https://raw.githubusercontent.com/Mirantis/cri-dockerd/master/packaging/systemd/cri-docker.service
+wget https://raw.githubusercontent.com/Mirantis/cri-dockerd/master/packaging/systemd/cri-docker.socket
+
+sudo install cri-docker.service /etc/systemd/system
+sudo install cri-docker.socket /etc/systemd/system
+sudo sed -i -e 's@/usr/bin/cri-dockerd@/usr/local/bin/cri-dockerd@' /etc/systemd/system/cri-docker.service
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now cri-docker.socket
+sudo systemctl start cri-docker.service && systemctl status cri-docker.service
 ```
 
 ### 1.4. 安装 Kubernetes
